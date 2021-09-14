@@ -16,6 +16,24 @@ from utils import *
 
 # список скринов с именами целей
 targets_list = ['warewolf_hunter.png', 'warewolf_chieftain.png', 'warewolf.png']
+targets_names_list = ['werewolf hunter', 'werewolf chieftain', 'werewolf']
+
+
+def get_target_by_name(lst: list):
+    for target in lst:
+        split_name = target.split()
+        send_keys(f"/target")
+        for name_part in split_name:
+            send_keys("{VK_SPACE down}")
+            send_keys("{VK_SPACE up}")
+            send_keys(name_part)
+
+        send_keys("{VK_RETURN down}"
+                  "{VK_RETURN up}")
+        if checkIfMod():
+            atack()
+        time.sleep(.5)
+
 
 
 def getImageFromScreen():
@@ -26,7 +44,7 @@ def getImageFromScreen():
     """
 
     for target in targets_list:
-        img = pyautogui.locateOnScreen(target, confidence=0.6)
+        img = pyautogui.locateOnScreen(target, confidence=0.5)
         if img != None:
             print(f'Вижу Моба: {target.split(".")[0]}')
             x, y, w, h= img.left, img.top, img.width, img.height
@@ -47,8 +65,9 @@ def main():
         else:
             get_loot()
             nextTarget()
-            if not getImageFromScreen():
-                turnRight()
+            # if not getImageFromScreen():
+            #     turnRight()
+            get_target_by_name(targets_names_list)
                 
 
 
