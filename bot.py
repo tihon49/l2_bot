@@ -1,14 +1,9 @@
-from pywinauto import application
 from pywinauto.keyboard import send_keys
 import pywinauto
 import time
 import pyautogui
-# import keyboard
 import win32api
 import win32con
-import random
-
-# from utils import *
 
 
 # узнать координаты и цвет
@@ -26,7 +21,7 @@ MOB_HP_RGB_COLOR = None
 targets_list = ['warewolf_hunter.png', 'warewolf_chieftain.png', 'warewolf.png']
 
 # список имен мобов
-targets_names_list = ['werewolf hunter', 'werewolf chieftain', 'werewolf']
+targets_names_list = ['vuku orc fighter', 'langk lizardman']
 # targets_names_list = ['crasher', 'blade spider', 'talon spider']
 
 
@@ -37,17 +32,11 @@ def get_target_by_name(lst: list):
     """
 
     for target in lst:
-        split_name = target.split()
-        send_keys(f"/target")
-        for name_part in split_name:
-            send_keys("{VK_SPACE down}")
-            send_keys("{VK_SPACE up}")
-            send_keys(name_part)
-
-        send_keys("{VK_RETURN down}"
-                  "{VK_RETURN up}")
+        pyautogui.write(f'/target {target}', interval=0.05)
+        pyautogui.press('enter')
+        time.sleep(.5)
         if checkIfMob():
-            atack()
+            return atack()
         time.sleep(.5)
 
 
@@ -82,16 +71,14 @@ def checkHp():
     """проверяет уровень HP (цвет в указанных ранее координатах) и если надо, пьет банку"""
 
     if not pyautogui.pixelMatchesColor(PLAYER_MIN_HP[0], PLAYER_MIN_HP[1], PLAYER_HP_RGB_COLOR, tolerance=10):
-        send_keys("{VK_F5 down}"
-                  "{VK_F5 up}")
+        pyautogui.press('f5')
 
 
 def nextTarget():
     """выбор следующей цели"""
 
     print('Ищу жертву...')
-    send_keys("{VK_F2 down}"
-              "{VK_F2 up}")
+    pyautogui.press('f2')
     if checkIfMob():
         atack()
 
@@ -99,9 +86,9 @@ def nextTarget():
 def turnRight():
     """поворот нарпаво"""
 
-    send_keys("{VK_RIGHT down}")
+    pyautogui.keyDown("left")
     time.sleep(1)
-    send_keys("{VK_RIGHT up}")
+    pyautogui.keyUp("left")
 
 
 def atack():
@@ -109,10 +96,10 @@ def atack():
 
     print('Вижу цель - В АТАКУ!!!')
     while checkIfMob():
-        send_keys("{VK_F1 down}"
-                  "{VK_F1 up}")
+        pyautogui.press('f1')
+        pyautogui.press('f3')
         checkHp()
-        time.sleep(.2)
+        cantSeeTagetCheck()
     get_loot()
 
 
@@ -133,8 +120,7 @@ def get_loot():
     print('Ищу лут')
     for _ in range(4):
         nextTarget()
-        send_keys("{VK_F4 down}"
-                  "{VK_F4 up}")
+        pyautogui.press("f4")
         checkHp()
         time.sleep(.5)
 
@@ -159,6 +145,16 @@ def getImageFromScreen():
             return False
 
 
+def cantSeeTagetCheck():
+    """Если не видит цель, жмет ESC"""
+
+    img = pyautogui.locateOnScreen('cantseetarget.png', grayscale=True, confidence=0.8)
+    if img != None:
+        print('Не вижу цель')
+        for _ in range(5):
+            pyautogui.press("esc")
+
+
 def main():
     time.sleep(3)
     while True:
@@ -180,30 +176,3 @@ if __name__ == '__main__':
     MOB_MIN_HP, MOB_HP_RGB_COLOR = befor_start_settings('Установите курсор на минимальной отметке HP моба и нажмите ENTR')
     main()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# time.sleep(15)
-# for i in range(10):
-#     time.sleep(5)
-#     pywinauto.mouse.click(button='left', coords=(520, 432))
-#     time.sleep(1)
-#     send_keys('tihon49')
-#     time.sleep(2)
-#     pywinauto.mouse.click(button='left', coords=(520, 455))
-#     send_keys('7111354')
