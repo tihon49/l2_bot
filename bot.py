@@ -4,10 +4,7 @@ import time
 import pyautogui
 import win32api
 import win32con
-
-
-# узнать координаты и цвет
-# iml = pyautogui.displayMousePosition()
+import random
 
 
 PLAYER_MIN_HP = None
@@ -18,10 +15,12 @@ MOB_HP_RGB_COLOR = None
 
 
 # список скринов с именами целей
-targets_list = ['warewolf_hunter.png', 'warewolf_chieftain.png', 'warewolf.png']
+targets_png_list = ['warewolf_hunter.png', 'warewolf_chieftain.png', 'warewolf.png']
 
 # список имен мобов
-targets_names_list = ['vuku orc fighter', 'langk lizardman']
+# targets_names_list = ['vuku orc fighter', 'langk lizardman']
+# targets_names_list = ['grizzly bear', 'plain grizzly', 'poison spider', 'ratman hunter', 'young araneid', 'arachnid tracker', 'giant poison bee']
+targets_names_list = ['giant mist leech',]
 # targets_names_list = ['crasher', 'blade spider', 'talon spider']
 
 
@@ -31,13 +30,14 @@ def get_target_by_name(lst: list):
     имя цели берется из списка
     """
 
-    for target in lst:
-        pyautogui.write(f'/target {target}', interval=0.05)
-        pyautogui.press('enter')
-        time.sleep(.5)
-        if checkIfMob():
-            return atack()
-        time.sleep(.5)
+    target = random.choice(lst)
+    pyautogui.press('enter')
+    pyautogui.write(f'/target {target}', interval=0.01)
+    pyautogui.press('enter')
+    time.sleep(.5)
+    if checkIfMob():
+        return atack()
+    time.sleep(.5)
 
 
 def befor_start_settings(text: str) -> tuple:
@@ -71,14 +71,15 @@ def checkHp():
     """проверяет уровень HP (цвет в указанных ранее координатах) и если надо, пьет банку"""
 
     if not pyautogui.pixelMatchesColor(PLAYER_MIN_HP[0], PLAYER_MIN_HP[1], PLAYER_HP_RGB_COLOR, tolerance=10):
-        pyautogui.press('f5')
+        pyautogui.press('5')
 
 
 def nextTarget():
     """выбор следующей цели"""
 
     print('Ищу жертву...')
-    pyautogui.press('f2')
+    pyautogui.press('2')
+    pyautogui.press('7')
     if checkIfMob():
         atack()
 
@@ -96,8 +97,9 @@ def atack():
 
     print('Вижу цель - В АТАКУ!!!')
     while checkIfMob():
-        pyautogui.press('f1')
-        pyautogui.press('f3')
+        pyautogui.press('1')
+        pyautogui.press('3')
+        time.sleep(1)
         checkHp()
         cantSeeTagetCheck()
     get_loot()
@@ -120,7 +122,7 @@ def get_loot():
     print('Ищу лут')
     for _ in range(4):
         nextTarget()
-        pyautogui.press("f4")
+        pyautogui.press("4")
         checkHp()
         time.sleep(.5)
 
@@ -148,7 +150,7 @@ def getImageFromScreen():
 def cantSeeTagetCheck():
     """Если не видит цель, жмет ESC"""
 
-    img = pyautogui.locateOnScreen('cantseetarget.png', grayscale=True, confidence=0.8)
+    img = pyautogui.locateOnScreen('cantseetarget.png', confidence=.4)
     if img != None:
         print('Не вижу цель')
         for _ in range(5):
@@ -173,6 +175,6 @@ def main():
 if __name__ == '__main__':
     time.sleep(5)
     PLAYER_MIN_HP, PLAYER_HP_RGB_COLOR = befor_start_settings('Установите курсор на HP игрока для настройки хила банкой и нажмите ENTER')
-    MOB_MIN_HP, MOB_HP_RGB_COLOR = befor_start_settings('Установите курсор на минимальной отметке HP моба и нажмите ENTR')
+    MOB_MIN_HP, MOB_HP_RGB_COLOR = befor_start_settings('Установите курсор на минимальной отметке HP моба и нажмите ENTER')
     main()
 
